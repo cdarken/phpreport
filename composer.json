@@ -1,6 +1,8 @@
 {
     "name" : "vernes/phpreport",
     "description": "Library for generating reports from PHP",
+	"type": "library",
+    "license": "LGPL",
     "require": {
 	"phpoffice/phpexcel" : "1.8.1",
 	"php" : ">=5.2.0",
@@ -13,7 +15,7 @@
         }
     },
     "support" : {
-	"issues" : "https://github.com/vernes/PHPReport/issues"
+		"issues" : "https://github.com/vernes/PHPReport/issues"
     },
 	"authors": [
         {

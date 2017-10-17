@@ -26,8 +26,6 @@
  * @version 1.1, 2013-01-06
  */
 
-require __DIR__ . '/vendor/autoload.php';
-
 class PHPReport {
     
     //report template

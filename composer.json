@@ -1,5 +1,6 @@
 {
     "name" : "vernes/phpreport",
+    "description": "Library for generating reports from PHP",
     "require": {
 	"phpoffice/phpexcel" : "1.8.1",
 	"php" : ">=5.2.0",
@@ -10,5 +11,14 @@
         "psr-0": {
             "PHPReport": "src/"
         }
-    }
+    },
+    "support" : {
+	"issues" : "https://github.com/vernes/PHPReport/issues"
+    },
+	"authors": [
+        {
+            "name" : "Vernes",
+			"homepage" : "http://github.com/vernes"
+        }
+    ],
 }

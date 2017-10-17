@@ -1,5 +1,5 @@
 {
-    "name" : "nicolastavella/PHPReport",
+    "name" : "nicolastavella/phpreport",
     "description": "Library for generating reports from PHP",
 	"type": "library",
     "license": "LGPL",

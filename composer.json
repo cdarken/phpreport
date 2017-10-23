@@ -1,25 +1,25 @@
 {
-    "name" : "nicolastavella/phpreport",
-    "description": "Library for generating reports from PHP",
+	"name" : "nicolastavella/phpreport",
+	"description": "Library for generating reports from PHP",
 	"type": "library",
-    "license": "LGPL",
-    "require": {
-	"phpoffice/phpexcel" : "1.8.1",
-	"php" : ">=5.2.0",
-	"ext-xmlwriter" : "0.1"
+ 	"license": "LGPL",
+ 	"require": {
+		"phpoffice/phpexcel" : "1.8.1",
+		"php" : ">=5.2.0",
+		"ext-xmlwriter" : "0.1"
     },
-    "autoload": {
-        "psr-0": {
-            "PHPReport": "src"
-        }
-    },
-    "support" : {
+	"autoload": {
+		"psr-0": {
+			"PHPReport": "src"
+		}
+	},
+	"support" : {
 		"issues" : "https://github.com/vernes/PHPReport/issues"
-    },
+	},
 	"authors": [
-        {
-            "name" : "Vernes",
+		{
+			"name" : "Vernes",
 			"homepage" : "http://github.com/vernes"
-        }
-    ]
+		}
+	]
 }

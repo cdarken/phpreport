@@ -1,12 +1,12 @@
 {
-	"name" : "nicolastavella/phpreport",
+	"name" : "cdarken/phpreport",
 	"description": "Library for generating reports from PHP",
 	"type": "library",
  	"license": "LGPL",
  	"require": {
-		"phpoffice/phpexcel" : "1.8.1",
+		"phpoffice/phpexcel" : ">=1.8.1",
 		"php" : ">=5.2.0",
-		"ext-xmlwriter" : "0.1"
+		"ext-xmlwriter" : ">=0.1"
     },
 	"autoload": {
 		"psr-0": {

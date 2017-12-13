@@ -132,7 +132,11 @@ class PHPReport {
     
     //PHPExcel objects
 	private $objReader;
+
+	/** @var  PHPExcel */
 	private $objPHPExcel;
+
+	/** @var  PHPExcel_Worksheet */
 	private $objWorksheet;
 	private $objWriter;
     
@@ -393,8 +397,9 @@ class PHPReport {
      */
     public function generateReport()
     {
-		$this->_lastColumn=$this->objWorksheet->getHighestColumn();//TODO: better detection
-		$this->_lastRow=$this->objWorksheet->getHighestRow();
+		$this->_lastColumn=$this->objWorksheet->getHighestDataColumn();//TODO: better detection
+		$this->_lastRow=$this->objWorksheet->getHighestDataRow();
+		$lastColumnIndex = PHPExcel_Cell::columnIndexFromString($this->_lastColumn);
         foreach($this->_data as $data)
 		{
 			$group=isset($data['group'])?$data['group']:array();
@@ -418,10 +423,17 @@ class PHPReport {
 					$cellIterator = $row->getCellIterator();
 					$rowIndex = $row->getRowIndex();
 					//find the repeating range (one or more rows)
-					foreach ($cellIterator as $cell)
+                    /** @var PHPExcel_Cell $cell */
+                    foreach ($cellIterator as $cell)
 					{
 						$cellval=trim($cell->getValue());
 						$column = $cell->getColumn();
+						$columnIndex = PHPExcel_Cell::columnIndexFromString($column);
+
+                        if ($columnIndex > $lastColumnIndex) {
+						    $lastCol = $column;
+						    break;
+                        }
 						//see if the cell has something for replacing
 						if(preg_match_all("/\{".$data['id'].":(\w*|#\+?-?(\d*)?)\}/", $cellval, $matches))
 						{
@@ -839,11 +851,19 @@ class PHPReport {
 	 */
 	private function searchAndReplace()
     {
+        $highestDataColumn = PHPExcel_Cell::columnIndexFromString($this->objWorksheet->getHighestDataColumn());
+        $highestDataRow = $this->objWorksheet->getHighestDataRow();
+        $rowIndex = 0;
+        /** @var PHPExcel_Worksheet_Row $row */
         foreach ($this->objWorksheet->getRowIterator() as $row)
 		{
+		    if (++$rowIndex > $highestDataRow) break;
 			$cellIterator = $row->getCellIterator();
-			foreach ($cellIterator as $cell)
+			$cellIndex = 0;
+			/** @var PHPExcel_Cell $cell */
+            foreach ($cellIterator as $cell)
 			{
+			    if (++$cellIndex > $highestDataColumn) break;
 				$cell->setValue(str_replace($this->_search, $this->_replace, $cell->getValue()));
 			}
 		}

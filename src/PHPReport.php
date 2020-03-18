@@ -921,7 +921,7 @@ class PHPReport {
      * @param string $type
      * @param string $filename 
      */
-    public function render($type='html',$filename='')
+    public function render($type='html', $filename='', $noDownload = false)
     {
         //create or generate report
         if($this->_usingTemplate)
@@ -942,13 +942,13 @@ class PHPReport {
 		if(strtolower($type)=='html')
 			return $this->renderHtml();
 		elseif(strtolower($type)=='excel')
-			return $this->renderXlsx($filename);
+			return $this->renderXlsx($filename, $noDownload);
 		elseif(strtolower($type)=='excel2003')
-			return $this->renderXls($filename);
+			return $this->renderXls($filename, $noDownload);
 		elseif(strtolower($type)=='pdf')
-			return $this->renderPdf($filename);
+			return $this->renderPdf($filename, $noDownload);
 		elseif(strtolower($type)=='csv')
-			return $this->renderCsv($filename);
+			return $this->renderCsv($filename, $noDownload);
 		else
 			return "Error: unsupported export type!"; //TODO: better error handling
     }
@@ -978,54 +978,61 @@ class PHPReport {
     /**
      * Renders report as a XLSX file
 	 */
-	private function renderXlsx($filename)
+	private function renderXlsx($filename, $noDownload = false)
     {
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment;filename="'.$filename.'.xlsx"');
-		header('Cache-Control: max-age=0');
+        if (!$noDownload) {
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+            header('Cache-Control: max-age=0');
+        }
 
-		$this->objWriter = PHPExcel_IOFactory::createWriter($this->objPHPExcel, 'Excel2007');
+        $content = $this->doRender('Excel2007', $noDownload);
 
-        $this->objWriter->save('php://output');
-		unset($this->objWriter);
-		unset($this->objWorksheet);
-		unset($this->objReader);
-		unset($this->objPHPExcel);
-		exit();
+		if ($noDownload) {
+		    return $content;
+        } else {
+            exit();
+        }
     }
     
 	/**
      * Renders report as a XLS file
 	 */
-	private function renderXls($filename)
+	private function renderXls($filename, $noDownload = false)
     {
-        header('Content-Type: application/vnd.ms-excel');
-		header('Content-Disposition: attachment;filename="'.$filename.'.xls"');
-		header('Cache-Control: max-age=0');
+        if (!$noDownload) {
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+            header('Cache-Control: max-age=0');
+        }
 
-		$this->objWriter = PHPExcel_IOFactory::createWriter($this->objPHPExcel, 'Excel5');
+        $content = $this->doRender('Excel5', $noDownload);
 
-        $this->objWriter->save('php://output');
-		unset($this->objWriter);
-		unset($this->objWorksheet);
-		unset($this->objReader);
-		unset($this->objPHPExcel);
-		exit();
+        if ($noDownload) {
+            return $content;
+        } else {
+            exit();
+        }
     }
     
     /**
      * Renders report as a PDF file
 	 */
-	private function renderPdf($filename)
+	private function renderPdf($filename, $noDownload = false)
 	{
-        header('Content-Type: application/vnd.pdf');
-		header('Content-Disposition: attachment;filename="'.$filename.'.pdf"');
-		header('Cache-Control: max-age=0');
-		
-		$this->objWriter = PHPExcel_IOFactory::createWriter($this->objPHPExcel, 'PDF');
+        if (!$noDownload) {
+            header('Content-Type: application/vnd.pdf');
+            header('Content-Disposition: attachment;filename="' . $filename . '.pdf"');
+            header('Cache-Control: max-age=0');
+        }
 
-        $this->objWriter->save('php://output');
-		exit();
+        $content = $this->doRender('PDF', $noDownload);
+
+        if ($noDownload) {
+            return $content;
+        } else {
+            exit();
+        }
     }
     
 	/**
@@ -1066,22 +1073,44 @@ class PHPReport {
 	/**
 	* Renders report as a CSV file
 	*/
-	private function renderCsv($filename)
+	private function renderCsv($filename, $noDownload = false)
 	{
-		header('Content-type: text/csv');
-		header('Content-Disposition: attachment;filename="' . $filename . '.csv"');
-		header('Cache-Control: max-age=0');
+        if (!$noDownload) {
+            header('Content-type: text/csv');
+            header('Content-Disposition: attachment;filename="' . $filename . '.csv"');
+            header('Cache-Control: max-age=0');
+        }
 
-		$this->objWriter = PHPExcel_IOFactory::createWriter($this->objPHPExcel, 'CSV');
+        $content = $this->doRender('CSV', $noDownload);
 
-		$this->objWriter->save('php://output');
-        	unset($this->objWriter);
-        	unset($this->objWorksheet);
-        	unset($this->objReader);
-        	unset($this->objPHPExcel);
-        	exit();
-	}
-	
+        if ($noDownload) {
+            return $content;
+        } else {
+            exit();
+        }
+    }
+
+    private function doRender($writerType, $noDownload = false)
+    {
+        $this->objWriter = PHPExcel_IOFactory::createWriter($this->objPHPExcel, $writerType);
+
+        if ($noDownload) {
+            ob_start();
+        }
+        $this->objWriter->save('php://output');
+        unset($this->objWriter);
+        unset($this->objWorksheet);
+        unset($this->objReader);
+        unset($this->objPHPExcel);
+
+        if ($noDownload) {
+            $content = ob_get_contents();
+            ob_end_clean();
+            return $content;
+        }
+
+        return false;
+    }
 }
 
 /**
